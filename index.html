@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control de Asistencia</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #242424;
+    --border: #2e2e2e;
+    --accent: #f5c842;
+    --accent2: #e8f542;
+    --text: #f0f0f0;
+    --muted: #888;
+    --entrada: #42f587;
+    --salida: #f54242;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+    --display: 'Bebas Neue', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--surface);
+    border-bottom: 2px solid var(--accent);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-logo {
+    font-family: var(--display);
+    font-size: 1.8rem;
+    letter-spacing: 3px;
+    color: var(--accent);
+  }
+  .header-logo span { color: var(--text); }
+  .nav-tabs {
+    display: flex;
+    gap: 0;
+  }
+  .nav-tab {
+    padding: 0.5rem 1.5rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .nav-tab:first-child { border-radius: 4px 0 0 4px; }
+  .nav-tab:last-child { border-radius: 0 4px 4px 0; }
+  .nav-tab.active {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+  .nav-tab:hover:not(.active) {
+    background: var(--surface2);
+    color: var(--text);
+  }
+
+  /* PAGES */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* =====================
+     REGISTRO PAGE
+  ===================== */
+  .registro-container {
+    max-width: 480px;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+  }
+  .registro-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .registro-header {
+    background: linear-gradient(135deg, #1a1a1a 0%, #242424 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+  }
+  .registro-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 1.8rem;
+  }
+  .registro-title {
+    font-family: var(--display);
+    font-size: 2rem;
+    letter-spacing: 4px;
+    color: var(--accent);
+  }
+  .registro-date {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 0.5rem;
+    letter-spacing: 1px;
+  }
+  .registro-body {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .form-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .form-input {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.85rem 1rem;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 1rem;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  .form-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: #1e1e1e;
+  }
+  .form-input::placeholder { color: var(--muted); }
+
+  .tipo-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+  .tipo-btn {
+    padding: 1rem;
+    border-radius: 6px;
+    border: 2px solid var(--border);
+    background: var(--surface2);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .tipo-btn .tipo-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+  .tipo-btn .tipo-label {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: block;
+  }
+  .tipo-btn.entrada-btn.selected {
+    border-color: var(--entrada);
+    background: rgba(66,245,135,0.1);
+    color: var(--entrada);
+  }
+  .tipo-btn.salida-btn.selected {
+    border-color: var(--salida);
+    background: rgba(245,66,66,0.1);
+    color: var(--salida);
+  }
+  .tipo-btn:hover:not(.selected) {
+    border-color: var(--muted);
+    background: var(--surface);
+  }
+
+  .btn-registrar {
+    width: 100%;
+    padding: 1rem;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: 6px;
+    font-family: var(--display);
+    font-size: 1.2rem;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-registrar:hover {
+    background: var(--accent2);
+    transform: translateY(-1px);
+  }
+  .btn-registrar:active { transform: translateY(0); }
+
+  /* SUCCESS TOAST */
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    z-index: 999;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.entrada-toast { border-color: var(--entrada); }
+  .toast.salida-toast { border-color: var(--salida); }
+  .toast-icon { font-size: 1.2rem; }
+
+  /* =====================
+     REPORTE PAGE
+  ===================== */
+  .reporte-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+  }
+  .reporte-toolbar {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+  .reporte-title {
+    font-family: var(--display);
+    font-size: 1.8rem;
+    letter-spacing: 3px;
+    color: var(--accent);
+    flex: 1;
+  }
+  .filter-input {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.6rem 1rem;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    width: 180px;
+  }
+  .filter-input:focus { outline: none; border-color: var(--accent); }
+  .btn-export {
+    padding: 0.6rem 1.2rem;
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .btn-export:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+  .btn-clear {
+    padding: 0.6rem 1.2rem;
+    background: transparent;
+    border: 1px solid var(--salida);
+    color: var(--salida);
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-clear:hover { background: rgba(245,66,66,0.1); }
+
+  /* STATS */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.2rem;
+    text-align: center;
+  }
+  .stat-value {
+    font-family: var(--display);
+    font-size: 2.5rem;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .stat-total .stat-value { color: var(--accent); }
+  .stat-entradas .stat-value { color: var(--entrada); }
+  .stat-salidas .stat-value { color: var(--salida); }
+
+  /* TABLE */
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  thead {
+    background: var(--surface2);
+    border-bottom: 2px solid var(--accent);
+  }
+  thead th {
+    padding: 0.85rem 1.2rem;
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface2); }
+  tbody td {
+    padding: 0.85rem 1.2rem;
+    font-size: 0.9rem;
+  }
+  .td-nombre { font-weight: 600; }
+  .td-hora {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .td-fecha {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .badge {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .badge-entrada { background: rgba(66,245,135,0.15); color: var(--entrada); }
+  .badge-salida { background: rgba(245,66,66,0.15); color: var(--salida); }
+
+  .empty-state {
+    padding: 4rem;
+    text-align: center;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+  }
+  .empty-state .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; }
+
+  /* Responsive */
+  @media(max-width: 600px) {
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .stat-card:last-child { grid-column: 1 / -1; }
+    .reporte-toolbar { gap: 0.5rem; }
+    .filter-input { width: 100%; }
+    thead th:nth-child(4), tbody td:nth-child(4) { display: none; }
+  }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .registro-card { animation: fadeIn 0.4s ease; }
+  .table-wrap { animation: fadeIn 0.3s ease; }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-logo">CONTROL<span> ASISTENCIA</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('registro')">Registro</button>
+    <button class="nav-tab" onclick="showPage('reporte')">Reporte</button>
+  </div>
+</header>
+
+<!-- ===================== REGISTRO ===================== -->
+<div id="page-registro" class="page active">
+  <div class="registro-container">
+    <div class="registro-card">
+      <div class="registro-header">
+        <div class="registro-icon">🏭</div>
+        <div class="registro-title">REGISTRO</div>
+        <div class="registro-date" id="fecha-display"></div>
+      </div>
+      <div class="registro-body">
+        <div class="form-group">
+          <label class="form-label">Nombre completo</label>
+          <input class="form-input" type="text" id="nombre-input" placeholder="Escribe tu nombre..." autocomplete="off" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tipo de registro</label>
+          <div class="tipo-selector">
+            <div class="tipo-btn entrada-btn selected" onclick="selectTipo('entrada')">
+              <div class="tipo-icon">🟢</div>
+              <span class="tipo-label">Entrada</span>
+            </div>
+            <div class="tipo-btn salida-btn" onclick="selectTipo('salida')">
+              <div class="tipo-icon">🔴</div>
+              <span class="tipo-label">Salida</span>
+            </div>
+          </div>
+        </div>
+        <button class="btn-registrar" onclick="registrar()">REGISTRAR</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== REPORTE ===================== -->
+<div id="page-reporte" class="page">
+  <div class="reporte-container">
+    <div class="reporte-toolbar">
+      <div class="reporte-title">REPORTE</div>
+      <input class="filter-input" type="text" id="filtro-input" placeholder="Buscar trabajador..." oninput="renderTabla()" />
+      <input class="filter-input" type="date" id="filtro-fecha" oninput="renderTabla()" style="width:150px;" />
+      <button class="btn-export" onclick="exportarExcel()">⬇ Exportar Excel</button>
+      <button class="btn-clear" onclick="limpiarRegistros()">🗑 Limpiar</button>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card stat-total">
+        <div class="stat-value" id="stat-total">0</div>
+        <div class="stat-label">Total registros</div>
+      </div>
+      <div class="stat-card stat-entradas">
+        <div class="stat-value" id="stat-entradas">0</div>
+        <div class="stat-label">Entradas</div>
+      </div>
+      <div class="stat-card stat-salidas">
+        <div class="stat-value" id="stat-salidas">0</div>
+        <div class="stat-label">Salidas</div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Trabajador</th>
+            <th>Tipo</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-body"></tbody>
+      </table>
+      <div class="empty-state" id="empty-state" style="display:none;">
+        <div class="empty-icon">📋</div>
+        No hay registros aún.<br>Escanea el QR para comenzar.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toast-icon"></span>
+  <span id="toast-msg"></span>
+</div>
+
+<script>
+  // ── STATE ──
+  let registros = JSON.parse(localStorage.getItem('asistencia_registros') || '[]');
+  let tipoSeleccionado = 'entrada';
+
+  // ── INIT ──
+  function init() {
+    actualizarFecha();
+    setInterval(actualizarFecha, 1000);
+    renderTabla();
+  }
+
+  function actualizarFecha() {
+    const now = new Date();
+    const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const fecha = now.toLocaleDateString('es-MX', opts).toUpperCase();
+    const hora = now.toLocaleTimeString('es-MX');
+    document.getElementById('fecha-display').textContent = `${fecha} · ${hora}`;
+  }
+
+  // ── NAVIGATION ──
+  function showPage(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('page-' + page).classList.add('active');
+    event.target.classList.add('active');
+    if (page === 'reporte') renderTabla();
+  }
+
+  // ── TIPO SELECTOR ──
+  function selectTipo(tipo) {
+    tipoSeleccionado = tipo;
+    document.querySelectorAll('.tipo-btn').forEach(b => b.classList.remove('selected'));
+    document.querySelector('.' + tipo + '-btn').classList.add('selected');
+  }
+
+  // ── REGISTRAR ──
+  function registrar() {
+    const nombre = document.getElementById('nombre-input').value.trim();
+    if (!nombre) {
+      showToast('⚠️', 'Escribe tu nombre primero', 'neutral');
+      return;
+    }
+
+    const now = new Date();
+    const registro = {
+      id: Date.now(),
+      nombre: nombre,
+      tipo: tipoSeleccionado,
+      fecha: now.toLocaleDateString('es-MX'),
+      hora: now.toLocaleTimeString('es-MX'),
+      fechaISO: now.toISOString().split('T')[0],
+      timestamp: now.getTime()
+    };
+
+    registros.unshift(registro);
+    localStorage.setItem('asistencia_registros', JSON.stringify(registros));
+
+    const icono = tipoSeleccionado === 'entrada' ? '✅' : '🔴';
+    const tipo = tipoSeleccionado === 'entrada' ? 'Entrada' : 'Salida';
+    showToast(icono, `${tipo} registrada — ${nombre}`, tipoSeleccionado);
+
+    document.getElementById('nombre-input').value = '';
+  }
+
+  // ── RENDER TABLA ──
+  function renderTabla() {
+    const filtroNombre = (document.getElementById('filtro-input')?.value || '').toLowerCase();
+    const filtroFecha = document.getElementById('filtro-fecha')?.value || '';
+
+    let filtrados = registros.filter(r => {
+      const matchNombre = r.nombre.toLowerCase().includes(filtroNombre);
+      const matchFecha = filtroFecha ? r.fechaISO === filtroFecha : true;
+      return matchNombre && matchFecha;
+    });
+
+    // Stats
+    document.getElementById('stat-total').textContent = filtrados.length;
+    document.getElementById('stat-entradas').textContent = filtrados.filter(r => r.tipo === 'entrada').length;
+    document.getElementById('stat-salidas').textContent = filtrados.filter(r => r.tipo === 'salida').length;
+
+    const tbody = document.getElementById('tabla-body');
+    const empty = document.getElementById('empty-state');
+
+    if (filtrados.length === 0) {
+      tbody.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+
+    tbody.innerHTML = filtrados.map((r, i) => `
+      <tr>
+        <td class="td-fecha" style="color:#555;">${filtrados.length - i}</td>
+        <td class="td-nombre">${r.nombre}</td>
+        <td><span class="badge badge-${r.tipo}">${r.tipo}</span></td>
+        <td class="td-fecha">${r.fecha}</td>
+        <td class="td-hora">${r.hora}</td>
+      </tr>
+    `).join('');
+  }
+
+  // ── EXPORTAR EXCEL (CSV) ──
+  function exportarExcel() {
+    if (registros.length === 0) {
+      showToast('⚠️', 'No hay registros para exportar', 'neutral');
+      return;
+    }
+
+    const filtroNombre = document.getElementById('filtro-input')?.value.toLowerCase() || '';
+    const filtroFecha = document.getElementById('filtro-fecha')?.value || '';
+    let datos = registros.filter(r => {
+      const matchNombre = r.nombre.toLowerCase().includes(filtroNombre);
+      const matchFecha = filtroFecha ? r.fechaISO === filtroFecha : true;
+      return matchNombre && matchFecha;
+    });
+
+    const header = ['#', 'Nombre', 'Tipo', 'Fecha', 'Hora'];
+    const rows = datos.map((r, i) => [datos.length - i, r.nombre, r.tipo, r.fecha, r.hora]);
+
+    const csvContent = [header, ...rows]
+      .map(row => row.map(cell => `"${cell}"`).join(','))
+      .join('\n');
+
+    const BOM = '\uFEFF';
+    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `asistencia_${new Date().toLocaleDateString('es-MX').replace(/\//g,'-')}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('📊', 'Archivo exportado correctamente', 'entrada');
+  }
+
+  // ── LIMPIAR ──
+  function limpiarRegistros() {
+    if (registros.length === 0) return;
+    if (confirm('¿Seguro que quieres eliminar TODOS los registros? Esta acción no se puede deshacer.')) {
+      registros = [];
+      localStorage.removeItem('asistencia_registros');
+      renderTabla();
+      showToast('🗑️', 'Registros eliminados', 'salida');
+    }
+  }
+
+  // ── TOAST ──
+  function showToast(icono, msg, tipo) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-icon').textContent = icono;
+    document.getElementById('toast-msg').textContent = msg;
+    toast.className = 'toast';
+    if (tipo !== 'neutral') toast.classList.add(tipo + '-toast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  }
+
+  init();
+</script>
+</body>
+</html>
