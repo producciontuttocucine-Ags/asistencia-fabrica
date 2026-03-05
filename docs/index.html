@@ -29,7 +29,6 @@
     min-height: 100vh;
   }
 
-  /* HEADER */
   .header {
     background: var(--surface);
     border-bottom: 2px solid var(--accent);
@@ -49,38 +48,6 @@
     color: var(--accent);
   }
   .header-logo span { color: var(--text); }
-  .nav-tabs {
-    display: flex;
-    gap: 0;
-  }
-  .nav-tab {
-    padding: 0.5rem 1.5rem;
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    cursor: pointer;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--muted);
-    transition: all 0.2s;
-  }
-  .nav-tab:first-child { border-radius: 4px 0 0 4px; }
-  .nav-tab:last-child { border-radius: 0 4px 4px 0; }
-  .nav-tab.active {
-    background: var(--accent);
-    color: var(--bg);
-    border-color: var(--accent);
-    font-weight: 600;
-  }
-  .nav-tab:hover:not(.active) {
-    background: var(--surface2);
-    color: var(--text);
-  }
-
-  /* PAGES */
-  .page { display: none; }
-  .page.active { display: block; }
 
   /* =====================
      REGISTRO PAGE
@@ -95,6 +62,7 @@
     border: 1px solid var(--border);
     border-radius: 8px;
     overflow: hidden;
+    animation: fadeIn 0.4s ease;
   }
   .registro-header {
     background: linear-gradient(135deg, #1a1a1a 0%, #242424 100%);
@@ -211,14 +179,30 @@
     letter-spacing: 3px;
     cursor: pointer;
     transition: all 0.2s;
+    position: relative;
   }
-  .btn-registrar:hover {
-    background: var(--accent2);
-    transform: translateY(-1px);
+  .btn-registrar:hover { background: var(--accent2); transform: translateY(-1px); }
+  .btn-registrar:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
   }
-  .btn-registrar:active { transform: translateY(0); }
 
-  /* SUCCESS TOAST */
+  /* Spinner */
+  .spinner {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(0,0,0,0.3);
+    border-top-color: #000;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* TOAST */
   .toast {
     position: fixed;
     bottom: 2rem;
@@ -236,305 +220,64 @@
     z-index: 999;
     transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    white-space: nowrap;
   }
   .toast.show { transform: translateX(-50%) translateY(0); }
   .toast.entrada-toast { border-color: var(--entrada); }
   .toast.salida-toast { border-color: var(--salida); }
-  .toast-icon { font-size: 1.2rem; }
+  .toast.error-toast { border-color: #f5a742; }
 
-  /* =====================
-     REPORTE PAGE
-  ===================== */
-  .reporte-container {
-    max-width: 900px;
-    margin: 2rem auto;
-    padding: 0 1.5rem;
-  }
-  .reporte-toolbar {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 1.5rem;
-  }
-  .reporte-title {
-    font-family: var(--display);
-    font-size: 1.8rem;
-    letter-spacing: 3px;
-    color: var(--accent);
-    flex: 1;
-  }
-  .filter-input {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 0.6rem 1rem;
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 0.8rem;
-    width: 180px;
-  }
-  .filter-input:focus { outline: none; border-color: var(--accent); }
-  .btn-export {
-    padding: 0.6rem 1.2rem;
-    background: transparent;
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    border-radius: 4px;
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .btn-export:hover {
-    background: var(--accent);
-    color: var(--bg);
-  }
-  .btn-clear {
-    padding: 0.6rem 1.2rem;
-    background: transparent;
-    border: 1px solid var(--salida);
-    color: var(--salida);
-    border-radius: 4px;
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .btn-clear:hover { background: rgba(245,66,66,0.1); }
-
-  /* STATS */
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 1.2rem;
-    text-align: center;
-  }
-  .stat-value {
-    font-family: var(--display);
-    font-size: 2.5rem;
-    line-height: 1;
-    margin-bottom: 0.3rem;
-  }
-  .stat-label {
-    font-family: var(--mono);
-    font-size: 0.65rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  .stat-total .stat-value { color: var(--accent); }
-  .stat-entradas .stat-value { color: var(--entrada); }
-  .stat-salidas .stat-value { color: var(--salida); }
-
-  /* TABLE */
-  .table-wrap {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    overflow: hidden;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  thead {
-    background: var(--surface2);
-    border-bottom: 2px solid var(--accent);
-  }
-  thead th {
-    padding: 0.85rem 1.2rem;
-    text-align: left;
-    font-family: var(--mono);
-    font-size: 0.65rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--muted);
-    font-weight: 600;
-  }
-  tbody tr {
-    border-bottom: 1px solid var(--border);
-    transition: background 0.15s;
-  }
-  tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: var(--surface2); }
-  tbody td {
-    padding: 0.85rem 1.2rem;
-    font-size: 0.9rem;
-  }
-  .td-nombre { font-weight: 600; }
-  .td-hora {
-    font-family: var(--mono);
-    font-size: 0.85rem;
-    color: var(--muted);
-  }
-  .td-fecha {
-    font-family: var(--mono);
-    font-size: 0.8rem;
-    color: var(--muted);
-  }
-  .badge {
-    display: inline-block;
-    padding: 0.25rem 0.6rem;
-    border-radius: 3px;
-    font-family: var(--mono);
-    font-size: 0.65rem;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    font-weight: 600;
-  }
-  .badge-entrada { background: rgba(66,245,135,0.15); color: var(--entrada); }
-  .badge-salida { background: rgba(245,66,66,0.15); color: var(--salida); }
-
-  .empty-state {
-    padding: 4rem;
-    text-align: center;
-    color: var(--muted);
-    font-family: var(--mono);
-    font-size: 0.85rem;
-    letter-spacing: 1px;
-  }
-  .empty-state .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; }
-
-  /* Responsive */
-  @media(max-width: 600px) {
-    .stats-row { grid-template-columns: 1fr 1fr; }
-    .stat-card:last-child { grid-column: 1 / -1; }
-    .reporte-toolbar { gap: 0.5rem; }
-    .filter-input { width: 100%; }
-    thead th:nth-child(4), tbody td:nth-child(4) { display: none; }
-  }
-
-  /* Animations */
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
   }
-  .registro-card { animation: fadeIn 0.4s ease; }
-  .table-wrap { animation: fadeIn 0.3s ease; }
 </style>
 </head>
 <body>
 
 <header class="header">
   <div class="header-logo">CONTROL<span> ASISTENCIA</span></div>
-  <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showPage('registro')">Registro</button>
-    <button class="nav-tab" onclick="showPage('reporte')">Reporte</button>
-  </div>
 </header>
 
-<!-- ===================== REGISTRO ===================== -->
-<div id="page-registro" class="page active">
-  <div class="registro-container">
-    <div class="registro-card">
-      <div class="registro-header">
-        <div class="registro-icon">🏭</div>
-        <div class="registro-title">REGISTRO</div>
-        <div class="registro-date" id="fecha-display"></div>
+<div class="registro-container">
+  <div class="registro-card">
+    <div class="registro-header">
+      <div class="registro-icon">🏭</div>
+      <div class="registro-title">REGISTRO</div>
+      <div class="registro-date" id="fecha-display"></div>
+    </div>
+    <div class="registro-body">
+      <div class="form-group">
+        <label class="form-label">Nombre completo</label>
+        <input class="form-input" type="text" id="nombre-input" placeholder="Escribe tu nombre..." autocomplete="off" />
       </div>
-      <div class="registro-body">
-        <div class="form-group">
-          <label class="form-label">Nombre completo</label>
-          <input class="form-input" type="text" id="nombre-input" placeholder="Escribe tu nombre..." autocomplete="off" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Tipo de registro</label>
-          <div class="tipo-selector">
-            <div class="tipo-btn entrada-btn selected" onclick="selectTipo('entrada')">
-              <div class="tipo-icon">🟢</div>
-              <span class="tipo-label">Entrada</span>
-            </div>
-            <div class="tipo-btn salida-btn" onclick="selectTipo('salida')">
-              <div class="tipo-icon">🔴</div>
-              <span class="tipo-label">Salida</span>
-            </div>
+      <div class="form-group">
+        <label class="form-label">Tipo de registro</label>
+        <div class="tipo-selector">
+          <div class="tipo-btn entrada-btn selected" onclick="selectTipo('entrada')">
+            <div class="tipo-icon">🟢</div>
+            <span class="tipo-label">Entrada</span>
+          </div>
+          <div class="tipo-btn salida-btn" onclick="selectTipo('salida')">
+            <div class="tipo-icon">🔴</div>
+            <span class="tipo-label">Salida</span>
           </div>
         </div>
-        <button class="btn-registrar" onclick="registrar()">REGISTRAR</button>
       </div>
+      <button class="btn-registrar" id="btn-registrar" onclick="registrar()">REGISTRAR</button>
     </div>
   </div>
 </div>
 
-<!-- ===================== REPORTE ===================== -->
-<div id="page-reporte" class="page">
-  <div class="reporte-container">
-    <div class="reporte-toolbar">
-      <div class="reporte-title">REPORTE</div>
-      <input class="filter-input" type="text" id="filtro-input" placeholder="Buscar trabajador..." oninput="renderTabla()" />
-      <input class="filter-input" type="date" id="filtro-fecha" oninput="renderTabla()" style="width:150px;" />
-      <button class="btn-export" onclick="exportarExcel()">⬇ Exportar Excel</button>
-      <button class="btn-clear" onclick="limpiarRegistros()">🗑 Limpiar</button>
-    </div>
-
-    <div class="stats-row">
-      <div class="stat-card stat-total">
-        <div class="stat-value" id="stat-total">0</div>
-        <div class="stat-label">Total registros</div>
-      </div>
-      <div class="stat-card stat-entradas">
-        <div class="stat-value" id="stat-entradas">0</div>
-        <div class="stat-label">Entradas</div>
-      </div>
-      <div class="stat-card stat-salidas">
-        <div class="stat-value" id="stat-salidas">0</div>
-        <div class="stat-label">Salidas</div>
-      </div>
-    </div>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Trabajador</th>
-            <th>Tipo</th>
-            <th>Fecha</th>
-            <th>Hora</th>
-          </tr>
-        </thead>
-        <tbody id="tabla-body"></tbody>
-      </table>
-      <div class="empty-state" id="empty-state" style="display:none;">
-        <div class="empty-icon">📋</div>
-        No hay registros aún.<br>Escanea el QR para comenzar.
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- TOAST -->
 <div class="toast" id="toast">
-  <span class="toast-icon" id="toast-icon"></span>
+  <span id="toast-icon"></span>
   <span id="toast-msg"></span>
 </div>
 
 <script>
-  // ── STATE ──
-  let registros = JSON.parse(localStorage.getItem('asistencia_registros') || '[]');
-  let tipoSeleccionado = 'entrada';
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxdnfIlsNGz6RCBJuZYDNklb4WmM7YYMMfYpfeB1kklAFsmbZmVKN32HZXNoQGL-M0Nzw/exec';
 
-  // ── INIT ──
-  function init() {
-    actualizarFecha();
-    setInterval(actualizarFecha, 1000);
-    renderTabla();
-  }
+  let tipoSeleccionado = 'entrada';
 
   function actualizarFecha() {
     const now = new Date();
@@ -543,145 +286,66 @@
     const hora = now.toLocaleTimeString('es-MX');
     document.getElementById('fecha-display').textContent = `${fecha} · ${hora}`;
   }
+  actualizarFecha();
+  setInterval(actualizarFecha, 1000);
 
-  // ── NAVIGATION ──
-  function showPage(page) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-    document.getElementById('page-' + page).classList.add('active');
-    event.target.classList.add('active');
-    if (page === 'reporte') renderTabla();
-  }
-
-  // ── TIPO SELECTOR ──
   function selectTipo(tipo) {
     tipoSeleccionado = tipo;
     document.querySelectorAll('.tipo-btn').forEach(b => b.classList.remove('selected'));
     document.querySelector('.' + tipo + '-btn').classList.add('selected');
   }
 
-  // ── REGISTRAR ──
-  function registrar() {
+  async function registrar() {
     const nombre = document.getElementById('nombre-input').value.trim();
     if (!nombre) {
-      showToast('⚠️', 'Escribe tu nombre primero', 'neutral');
+      showToast('⚠️', 'Escribe tu nombre primero', 'error');
       return;
     }
 
+    const btn = document.getElementById('btn-registrar');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>ENVIANDO...';
+
     const now = new Date();
-    const registro = {
-      id: Date.now(),
+    const payload = {
       nombre: nombre,
       tipo: tipoSeleccionado,
       fecha: now.toLocaleDateString('es-MX'),
-      hora: now.toLocaleTimeString('es-MX'),
-      fechaISO: now.toISOString().split('T')[0],
-      timestamp: now.getTime()
+      hora: now.toLocaleTimeString('es-MX')
     };
 
-    registros.unshift(registro);
-    localStorage.setItem('asistencia_registros', JSON.stringify(registros));
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
 
-    const icono = tipoSeleccionado === 'entrada' ? '✅' : '🔴';
-    const tipo = tipoSeleccionado === 'entrada' ? 'Entrada' : 'Salida';
-    showToast(icono, `${tipo} registrada — ${nombre}`, tipoSeleccionado);
+      const icono = tipoSeleccionado === 'entrada' ? '✅' : '🔴';
+      const tipo = tipoSeleccionado === 'entrada' ? 'Entrada' : 'Salida';
+      showToast(icono, `${tipo} registrada — ${nombre}`, tipoSeleccionado);
+      document.getElementById('nombre-input').value = '';
 
-    document.getElementById('nombre-input').value = '';
-  }
-
-  // ── RENDER TABLA ──
-  function renderTabla() {
-    const filtroNombre = (document.getElementById('filtro-input')?.value || '').toLowerCase();
-    const filtroFecha = document.getElementById('filtro-fecha')?.value || '';
-
-    let filtrados = registros.filter(r => {
-      const matchNombre = r.nombre.toLowerCase().includes(filtroNombre);
-      const matchFecha = filtroFecha ? r.fechaISO === filtroFecha : true;
-      return matchNombre && matchFecha;
-    });
-
-    // Stats
-    document.getElementById('stat-total').textContent = filtrados.length;
-    document.getElementById('stat-entradas').textContent = filtrados.filter(r => r.tipo === 'entrada').length;
-    document.getElementById('stat-salidas').textContent = filtrados.filter(r => r.tipo === 'salida').length;
-
-    const tbody = document.getElementById('tabla-body');
-    const empty = document.getElementById('empty-state');
-
-    if (filtrados.length === 0) {
-      tbody.innerHTML = '';
-      empty.style.display = 'block';
-      return;
-    }
-    empty.style.display = 'none';
-
-    tbody.innerHTML = filtrados.map((r, i) => `
-      <tr>
-        <td class="td-fecha" style="color:#555;">${filtrados.length - i}</td>
-        <td class="td-nombre">${r.nombre}</td>
-        <td><span class="badge badge-${r.tipo}">${r.tipo}</span></td>
-        <td class="td-fecha">${r.fecha}</td>
-        <td class="td-hora">${r.hora}</td>
-      </tr>
-    `).join('');
-  }
-
-  // ── EXPORTAR EXCEL (CSV) ──
-  function exportarExcel() {
-    if (registros.length === 0) {
-      showToast('⚠️', 'No hay registros para exportar', 'neutral');
-      return;
+    } catch (err) {
+      showToast('⚠️', 'Error de conexión, intenta de nuevo', 'error');
     }
 
-    const filtroNombre = document.getElementById('filtro-input')?.value.toLowerCase() || '';
-    const filtroFecha = document.getElementById('filtro-fecha')?.value || '';
-    let datos = registros.filter(r => {
-      const matchNombre = r.nombre.toLowerCase().includes(filtroNombre);
-      const matchFecha = filtroFecha ? r.fechaISO === filtroFecha : true;
-      return matchNombre && matchFecha;
-    });
-
-    const header = ['#', 'Nombre', 'Tipo', 'Fecha', 'Hora'];
-    const rows = datos.map((r, i) => [datos.length - i, r.nombre, r.tipo, r.fecha, r.hora]);
-
-    const csvContent = [header, ...rows]
-      .map(row => row.map(cell => `"${cell}"`).join(','))
-      .join('\n');
-
-    const BOM = '\uFEFF';
-    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `asistencia_${new Date().toLocaleDateString('es-MX').replace(/\//g,'-')}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-    showToast('📊', 'Archivo exportado correctamente', 'entrada');
+    btn.disabled = false;
+    btn.innerHTML = 'REGISTRAR';
   }
 
-  // ── LIMPIAR ──
-  function limpiarRegistros() {
-    if (registros.length === 0) return;
-    if (confirm('¿Seguro que quieres eliminar TODOS los registros? Esta acción no se puede deshacer.')) {
-      registros = [];
-      localStorage.removeItem('asistencia_registros');
-      renderTabla();
-      showToast('🗑️', 'Registros eliminados', 'salida');
-    }
-  }
-
-  // ── TOAST ──
   function showToast(icono, msg, tipo) {
     const toast = document.getElementById('toast');
     document.getElementById('toast-icon').textContent = icono;
     document.getElementById('toast-msg').textContent = msg;
     toast.className = 'toast';
-    if (tipo !== 'neutral') toast.classList.add(tipo + '-toast');
+    if (tipo === 'entrada') toast.classList.add('entrada-toast');
+    else if (tipo === 'salida') toast.classList.add('salida-toast');
+    else toast.classList.add('error-toast');
     toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3000);
+    setTimeout(() => toast.classList.remove('show'), 3500);
   }
-
-  init();
 </script>
 </body>
 </html>
